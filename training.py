@@ -73,7 +73,7 @@ def train(encoder, decoder, pairs, input_lang, output_lang, n_iterations, print_
 
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-    training_pairs = [tensorsFromPair(random.choice(pairs), input_lang, output_lang)
+    training_pairs = [tensorsFromPair(random.choice(pairs), input_lang, output_lang, device=device)
                       for j in range(n_iterations)]
     criterion = nn.NLLLoss()
 

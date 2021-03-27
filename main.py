@@ -9,6 +9,7 @@ import random
 import pickle
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 
 max_length = 10
 hidden_size = 256

@@ -18,9 +18,9 @@ def tensorFromSentence(lang, sentence, EOS_token=1, device='cpu'):
     return torch.tensor(indexes, dtype=torch.long, device=device).view(-1, 1)
 
 
-def tensorsFromPair(pair, input_lang, output_lang):
-    input_tensor = tensorFromSentence(input_lang, pair[0])
-    target_tensor = tensorFromSentence(output_lang, pair[1])
+def tensorsFromPair(pair, input_lang, output_lang, device='cpu'):
+    input_tensor = tensorFromSentence(input_lang, pair[0], device=device)
+    target_tensor = tensorFromSentence(output_lang, pair[1], device=device)
     return input_tensor, target_tensor
 
 
