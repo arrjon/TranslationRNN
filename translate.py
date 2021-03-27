@@ -16,7 +16,7 @@ eng_prefixes = (
     "they are", "they re "
 )
 max_length = 10
-hidden_size = 2
+hidden_size = 256
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print('Loading model...')
@@ -28,15 +28,15 @@ output_lang = pickle.load(file)
 encoder1 = EncoderRNN(input_lang.n_words, hidden_size, device).to(device)
 attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length, device=device).to(device)
 
-encoder1.load_state_dict(torch.load('encoder.pth'))
-attn_decoder1.load_state_dict(torch.load('decoder.pth'))
+encoder1.load_state_dict(torch.load('encoder.pth', map_location=device))
+attn_decoder1.load_state_dict(torch.load('decoder.pth', map_location=device))
 print('Model loaded! \n')
 
 test_sentence = normalizeString(input("English sentence to be translated: "))
 if len(test_sentence.split(' ')) < max_length and test_sentence.startswith(eng_prefixes):
     print('Translating...')
     output_words, attentions = evaluate(encoder1, attn_decoder1, input_lang, output_lang, test_sentence,
-                                        max_length, device)
+                                        max_length, device=device)
     output_sentence = ' '.join(output_words)
     print(output_sentence)
 else:
