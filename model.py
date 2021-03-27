@@ -4,8 +4,9 @@ import torch.nn.functional as F
 
 
 class EncoderRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, input_size, hidden_size, device):
         super(EncoderRNN, self).__init__()
+        self.device = device
         self.hidden_size = hidden_size
 
         self.embedding = nn.Embedding(input_size, hidden_size)
@@ -18,13 +19,14 @@ class EncoderRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size)
+        return torch.zeros(1, 1, self.hidden_size, device=self.device)
 
 
 class DecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size):
+    def __init__(self, hidden_size, output_size, device):
         super(DecoderRNN, self).__init__()
         self.hidden_size = hidden_size
+        self.device = device
 
         self.embedding = nn.Embedding(output_size, hidden_size)
         self.gru = nn.GRU(hidden_size, hidden_size)
@@ -39,12 +41,13 @@ class DecoderRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size)
+        return torch.zeros(1, 1, self.hidden_size, device=self.device)
 
 
 class AttnDecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=10):
+    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=10, device='cpu'):
         super(AttnDecoderRNN, self).__init__()
+        self.device = device
         self.hidden_size = hidden_size
         self.output_size = output_size
         self.dropout_p = dropout_p
@@ -76,4 +79,4 @@ class AttnDecoderRNN(nn.Module):
         return output, hidden, attn_weights
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size)
+        return torch.zeros(1, 1, self.hidden_size, device=self.device)

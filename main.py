@@ -11,10 +11,10 @@ import pickle
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 max_length = 10
-hidden_size = 256
+hidden_size = 2 #256
 lr = 0.01
 teacher_forcing_ratio = 0.5
-iterations = 75000
+iterations = 2 #75000
 
 eng_prefixes = (
     "i am ", "i m ",
@@ -45,13 +45,13 @@ for pair in pairs:
         train_pairs.append(pair)
 
 
-encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(device)
-attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length).to(device)
+encoder1 = EncoderRNN(input_lang.n_words, hidden_size, device).to(device)
+attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length, device=device).to(device)
 
 train(encoder1, attn_decoder1, train_pairs, input_lang, output_lang, n_iterations=iterations,
-      learning_rate=lr, teacher_forcing_ratio=teacher_forcing_ratio, max_length=max_length)
+      learning_rate=lr, teacher_forcing_ratio=teacher_forcing_ratio, max_length=max_length, device=device)
 
 torch.save(encoder1.state_dict(), 'encoder.pth')
 torch.save(attn_decoder1.state_dict(), 'decoder.pth')
 
-evaluateRandomly(encoder1, attn_decoder1, input_lang, output_lang, test_pairs, max_length)
+evaluateRandomly(encoder1, attn_decoder1, input_lang, output_lang, test_pairs, max_length, device=device)
