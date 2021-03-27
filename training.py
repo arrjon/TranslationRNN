@@ -120,7 +120,7 @@ def evaluate(encoder, decoder, input_lang, output_lang, sentence, max_length=10,
         decoder_hidden = encoder_hidden
 
         decoded_words = []
-        decoder_attentions = torch.zeros(max_length, max_length)
+        decoder_attentions = torch.zeros(max_length, max_length, device=device)
 
         for di in range(max_length):
             decoder_output, decoder_hidden, decoder_attention = decoder(
@@ -143,7 +143,8 @@ def evaluateRandomly(encoder, decoder, input_lang, output_lang, pairs, max_lengt
         pair = random.choice(pairs)
         print('>', pair[0])
         print('=', pair[1])
-        output_words, attentions = evaluate(encoder, decoder, input_lang, output_lang, pair[0], max_length, device=device)
+        output_words, attentions = evaluate(encoder, decoder, input_lang, output_lang, pair[0],
+                                            max_length, device=device)
         output_sentence = ' '.join(output_words)
         print('<', output_sentence)
         print('')

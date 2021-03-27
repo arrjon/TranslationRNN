@@ -25,8 +25,8 @@ input_lang = pickle.load(file)
 file = open('data/output.lang', 'rb')
 output_lang = pickle.load(file)
 
-encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(device)
-attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length).to(device)
+encoder1 = EncoderRNN(input_lang.n_words, hidden_size, device).to(device)
+attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length, device=device).to(device)
 
 encoder1.load_state_dict(torch.load('encoder.pth'))
 attn_decoder1.load_state_dict(torch.load('decoder.pth'))
@@ -35,7 +35,8 @@ print('Model loaded! \n')
 test_sentence = normalizeString(input("English sentence to be translated: "))
 if len(test_sentence.split(' ')) < max_length and test_sentence.startswith(eng_prefixes):
     print('Translating...')
-    output_words, attentions = evaluate(encoder1, attn_decoder1, input_lang, output_lang, test_sentence, max_length)
+    output_words, attentions = evaluate(encoder1, attn_decoder1, input_lang, output_lang, test_sentence,
+                                        max_length, device)
     output_sentence = ' '.join(output_words)
     print(output_sentence)
 else:
