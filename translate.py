@@ -7,14 +7,16 @@ from model import EncoderRNN, AttnDecoderRNN
 import torch
 import pickle
 
-eng_prefixes = (
+"""eng_prefixes = (
     "i am ", "i m ",
     "he is", "he s ",
     "she is", "she s ",
     "you are", "you re ",
     "we are", "we re ",
     "they are", "they re "
-)
+)"""
+eng_prefixes = None
+
 max_length = 10
 hidden_size = 256
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,11 +35,18 @@ attn_decoder1.load_state_dict(torch.load('decoder.pth', map_location=device))
 print('Model loaded! \n')
 
 test_sentence = normalizeString(input("English sentence to be translated: "))
-if len(test_sentence.split(' ')) < max_length and test_sentence.startswith(eng_prefixes):
+if eng_prefixes:
+    if not test_sentence.startswith(eng_prefixes):
+        print('This sentence is not supported...')
+        exit()
+if len(test_sentence.split(' ')) < max_length:
     print('Translating...')
-    output_words, attentions = evaluate(encoder1, attn_decoder1, input_lang, output_lang, test_sentence,
-                                        max_length, device=device)
-    output_sentence = ' '.join(output_words)
-    print(output_sentence)
+    try:
+        output_words, attentions = evaluate(encoder1, attn_decoder1, input_lang, output_lang, test_sentence,
+                                            max_length, device=device)
+        output_sentence = ' '.join(output_words)
+        print(output_sentence)
+    except KeyError:
+        print('Word not in dictionary...')
 else:
     print('This sentence is not supported...')

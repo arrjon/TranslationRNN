@@ -15,16 +15,17 @@ max_length = 10
 hidden_size = 256
 lr = 0.01
 teacher_forcing_ratio = 0.5
-iterations = 75000
+iterations = 100000
 
-eng_prefixes = (
+"""eng_prefixes = (
     "i am ", "i m ",
     "he is", "he s ",
     "she is", "she s ",
     "you are", "you re ",
     "we are", "we re ",
     "they are", "they re "
-)
+)"""
+eng_prefixes = None
 
 input_lang, output_lang, pairs = prepareData('eng', 'deu', max_length, eng_prefixes)
 
@@ -38,7 +39,7 @@ file.close()
 # split data into training and test data
 train_pairs = []
 test_pairs = []
-random_split = 0.33
+random_split = 0.1
 for pair in pairs:
     if random.random() < random_split:
         test_pairs.append(pair)
