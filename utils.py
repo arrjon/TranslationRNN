@@ -9,7 +9,7 @@ plt.switch_backend('agg')
 
 
 def indexesFromSentence(lang, sentence):
-    return [lang.word2index[word] for word in sentence.split(' ')]
+    return [lang.getIndex(word) for word in sentence.split(' ')]
 
 
 def tensorFromSentence(lang, sentence, EOS_token=1, device='cpu'):
