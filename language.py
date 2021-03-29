@@ -9,21 +9,46 @@ class Lang:
         self.name = name
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {0: "SOS", 1: "EOS"}
-        self.n_words = 2  # Count SOS and EOS
+        self.index2word = {0: "SOS", 1: "EOS", 2: "UNK"}
+        self.n_words = 3  # Count SOS, EOS and UNK
+        self.cutoff_point = -1
 
     def addSentence(self, sentence):
         for word in sentence.split(' '):
             self.addWord(word)
+        return
 
     def addWord(self, word):
-        if word not in self.word2index:
-            self.word2index[word] = self.n_words
-            self.word2count[word] = 1
-            self.index2word[self.n_words] = word
-            self.n_words += 1
-        else:
-            self.word2count[word] += 1
+        if self.word2count[word] > self.cutoff_point:
+            if word not in self.word2index:
+                self.word2index[word] = self.n_words
+                # self.word2count[word] = 1
+                self.index2word[self.n_words] = word
+                self.n_words += 1
+            # else:
+            #    self.word2count[word] += 1
+        return
+
+    def countWords(self, sentence):
+        for word in sentence.split(' '):
+            if word not in self.word2count:
+                self.word2count[word] = 1
+            else:
+                self.word2count[word] += 1
+
+    def createCutoff(self, max_vocab_size):
+        word_freq = list(self.word2count.values())
+        word_freq.sort(reverse=True)
+        if len(word_freq) > max_vocab_size:
+            self.cutoff_point = word_freq[max_vocab_size]
+        return
+
+    def getIndex(self, word, UNK_token=2):
+        try:
+            index = self.word2index[word]
+        except KeyError:
+            index = UNK_token
+        return index
 
 
 # Turn a Unicode string to plain ASCII, thanks to
@@ -79,17 +104,28 @@ def filterPairs(pairs, max_length, lang_prefixes=None):
     return [pair for pair in pairs if filterPair(pair, max_length, lang_prefixes)]
 
 
-def prepareData(lang1, lang2, max_length, lang_prefixes=None, reverse=False):
+def prepareData(lang1, lang2, max_length, max_vocab_size=20000, lang_prefixes=None, reverse=False):
     input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
+
     pairs = filterPairs(pairs, max_length, lang_prefixes)
     print("Trimmed to %s sentence pairs" % len(pairs))
+
     print("Counting words...")
+    for pair in pairs:
+        input_lang.countWords(pair[0])
+        output_lang.countWords(pair[1])
+
+    input_lang.createCutoff(max_vocab_size)
+    output_lang.createCutoff(max_vocab_size)
+
+    print("Create vocabulary...")
     clean_pairs = []
     for pair in pairs:
         input_lang.addSentence(pair[0])
         output_lang.addSentence(pair[1])
         clean_pairs.append([pair[0], pair[1]])
+
     print("Counted words:")
     print(input_lang.name, input_lang.n_words)
     print(output_lang.name, output_lang.n_words)

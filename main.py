@@ -27,7 +27,7 @@ teacher_forcing_ratio = 0.5
 )"""
 eng_prefixes = None
 
-input_lang, output_lang, pairs = prepareData('eng', 'deu', max_length, eng_prefixes)
+input_lang, output_lang, pairs = prepareData('eng', 'deu', max_length, lang_prefixes=eng_prefixes)
 iterations = len(pairs)*7
 
 file = open('data/input.lang', 'wb')

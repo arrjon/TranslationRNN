@@ -18,7 +18,7 @@ import pickle
 eng_prefixes = None
 
 max_length = 10
-hidden_size = 256
+hidden_size = 2
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print('Loading model...')
