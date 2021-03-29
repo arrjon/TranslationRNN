@@ -15,7 +15,7 @@ max_length = 10
 hidden_size = 256
 lr = 0.01
 teacher_forcing_ratio = 0.5
-iterations = 100000
+
 
 """eng_prefixes = (
     "i am ", "i m ",
@@ -28,6 +28,7 @@ iterations = 100000
 eng_prefixes = None
 
 input_lang, output_lang, pairs = prepareData('eng', 'deu', max_length, eng_prefixes)
+iterations = len(pairs)*7
 
 file = open('data/input.lang', 'wb')
 pickle.dump(input_lang, file)
