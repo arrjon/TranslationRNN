@@ -145,6 +145,6 @@ def evaluateRandomly(encoder, decoder, input_lang, output_lang, pairs, max_lengt
         print('=', pair[1])
         output_words, attentions = evaluate(encoder, decoder, input_lang, output_lang, pair[0],
                                             max_length, device=device)
-        output_sentence = ' '.join(output_words)
+        output_sentence = ' '.join(output_words[:-1])
         print('<', output_sentence)
         print('')
