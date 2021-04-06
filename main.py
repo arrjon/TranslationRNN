@@ -26,17 +26,21 @@ eng_prefixes = (
     "they are", "they re "
 )
 # eng_prefixes = None
+if eng_prefixes is None:
+    path = 'data/long/'
+else:
+    path = 'data/short/'
 
 input_lang, output_lang, pairs = prepareData('eng', 'deu', max_length, lang_prefixes=eng_prefixes)
 iterations = len(pairs)*7
 
-file = open('data/pairs_short.p', 'wb')
+file = open(path+'pairs.p', 'wb')
 pickle.dump(pairs, file)
 file.close()
-file = open('data/input_short.lang', 'wb')
+file = open(path+'input.lang', 'wb')
 pickle.dump(input_lang, file)
 file.close()
-file = open('data/output_short.lang', 'wb')
+file = open(path+'output.lang', 'wb')
 pickle.dump(output_lang, file)
 file.close()
 
@@ -57,7 +61,7 @@ attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_
 train(encoder1, attn_decoder1, train_pairs, input_lang, output_lang, n_iterations=iterations,
       learning_rate=lr, teacher_forcing_ratio=teacher_forcing_ratio, max_length=max_length, device=device)
 
-torch.save(encoder1.state_dict(), 'encoder.pth')
-torch.save(attn_decoder1.state_dict(), 'decoder.pth')
+torch.save(encoder1.state_dict(), path+'encoder.pth')
+torch.save(attn_decoder1.state_dict(), path+'decoder.pth')
 
 evaluateRandomly(encoder1, attn_decoder1, input_lang, output_lang, test_pairs, max_length, device=device)

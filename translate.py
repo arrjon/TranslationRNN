@@ -22,44 +22,37 @@ eng_prefixes = (
     "they are", "they re "
 )
 # eng_prefixes = None
+if eng_prefixes is None:
+    path = 'data/long/'
+else:
+    path = 'data/short/'
 
 max_length = 10
 hidden_size = 256
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-if eng_prefixes:
-    print('Loading short model...')
-    file = open('data/input_short.lang', 'rb')
-    input_lang = pickle.load(file)
-    file = open('data/output_short.lang', 'rb')
-    output_lang = pickle.load(file)
-    file = open('data/pairs_short.p', 'rb')
-    pairs = pickle.load(file)
-else:
-    print('Loading model...')
-    file = open('data/input.lang', 'rb')
-    input_lang = pickle.load(file)
-    file = open('data/output.lang', 'rb')
-    output_lang = pickle.load(file)
-    file = open('data/pairs.p', 'rb')
-    pairs = pickle.load(file)
+
+print('Loading model...')
+file = open(path+'input.lang', 'rb')
+input_lang = pickle.load(file)
+file = open(path+'output.lang', 'rb')
+output_lang = pickle.load(file)
+file = open(path+'pairs.p', 'rb')
+pairs = pickle.load(file)
+
 
 encoder1 = EncoderRNN(input_lang.n_words, hidden_size, device).to(device)
 attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length, device=device).to(device)
 
-if eng_prefixes:
-    encoder1.load_state_dict(torch.load('encoder_short.pth', map_location=device))
-    attn_decoder1.load_state_dict(torch.load('decoder_short.pth', map_location=device))
-else:
-    encoder1.load_state_dict(torch.load('encoder.pth', map_location=device))
-    attn_decoder1.load_state_dict(torch.load('decoder.pth', map_location=device))
+encoder1.load_state_dict(torch.load(path+'encoder.pth', map_location=device))
+attn_decoder1.load_state_dict(torch.load(path+'decoder.pth', map_location=device))
 print('Model loaded! \n')
 
 if randomEval:
     evaluateRandomly(encoder1, attn_decoder1, input_lang, output_lang, pairs, max_length, device=device)
     exit()
 
-print('Prefixes are: ', ', '.join(eng_prefixes))
+print('Prefixes are: I am..., he/she is..., you/we/they are...')
 while True:
     try:
         test_sentence = normalizeString(input("English sentence to be translated: "))
