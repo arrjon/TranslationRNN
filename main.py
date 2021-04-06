@@ -17,15 +17,15 @@ lr = 0.01
 teacher_forcing_ratio = 0.5
 
 
-'''eng_prefixes = (
+eng_prefixes = (
     "i am ", "i m ",
     "he is", "he s ",
     "she is", "she s ",
     "you are", "you re ",
     "we are", "we re ",
     "they are", "they re "
-)'''
-eng_prefixes = None
+)
+# eng_prefixes = None
 
 input_lang, output_lang, pairs = prepareData('eng', 'deu', max_length, lang_prefixes=eng_prefixes)
 iterations = len(pairs)*7

@@ -70,8 +70,10 @@ while True:
             print('>>', output_sentence)
         else:
             print('This sentence is too long...')
+        print('\n')
         enter = input('Press enter to continue...')
         if enter != '':
             break
+        print('\n')
     except KeyboardInterrupt:
         break
