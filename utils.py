@@ -45,3 +45,6 @@ def showPlot(points):
     loc = ticker.MultipleLocator(base=0.2)
     ax.yaxis.set_major_locator(loc)
     plt.plot(points)
+    plt.savefig("loss-plot.png")
+    plt.close()
+    return
