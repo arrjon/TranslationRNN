@@ -2,7 +2,7 @@
 
 from language import prepareData
 from model import EncoderRNN, AttnDecoderRNN
-from training import train, evaluateRandomly
+from training import train, evaluateRandomly, cal_bleu_score
 
 import torch
 import random
@@ -48,6 +48,7 @@ file.close()
 train_pairs = []
 test_pairs = []
 random_split = 0.1
+random.seed(1) # to get same test data
 for pair in pairs:
     if random.random() < random_split:
         test_pairs.append(pair)
@@ -63,5 +64,10 @@ train(encoder1, attn_decoder1, train_pairs, input_lang, output_lang, n_iteration
 
 torch.save(encoder1.state_dict(), path+'encoder.pth')
 torch.save(attn_decoder1.state_dict(), path+'decoder.pth')
+
+print('Scores on training data:')
+cal_bleu_score(encoder1, attn_decoder1, input_lang, output_lang, train_pairs, max_length, device=device)
+print('Scores on test data:')
+cal_bleu_score(encoder1, attn_decoder1, input_lang, output_lang, test_pairs, max_length, device=device)
 
 evaluateRandomly(encoder1, attn_decoder1, input_lang, output_lang, test_pairs, max_length, device=device)
