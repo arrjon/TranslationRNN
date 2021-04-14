@@ -27,6 +27,7 @@ if eng_prefixes is None:
 else:
     path = 'data/short/'
 
+# parameters
 max_length = 10
 hidden_size = 256
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -40,10 +41,11 @@ output_lang = pickle.load(file)
 file = open(path+'pairs.p', 'rb')
 pairs = pickle.load(file)
 
-
+# create model
 encoder1 = EncoderRNN(input_lang.n_words, hidden_size, device).to(device)
 attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, max_length=max_length, device=device).to(device)
 
+# load model
 encoder1.load_state_dict(torch.load(path+'encoder.pth', map_location=device))
 attn_decoder1.load_state_dict(torch.load(path+'decoder.pth', map_location=device))
 print('Model loaded! \n')

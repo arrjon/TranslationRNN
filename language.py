@@ -1,3 +1,5 @@
+# Jonas Arruda
+
 from __future__ import unicode_literals, print_function, division
 from io import open
 import unicodedata
@@ -22,11 +24,8 @@ class Lang:
         if self.word2count[word] > self.cutoff_point:
             if word not in self.word2index:
                 self.word2index[word] = self.n_words
-                # self.word2count[word] = 1
                 self.index2word[self.n_words] = word
                 self.n_words += 1
-            # else:
-            #    self.word2count[word] += 1
         return
 
     def countWords(self, sentence):

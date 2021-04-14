@@ -1,3 +1,5 @@
+# Jonas Arruda
+
 from utils import tensorsFromPair, showPlot, timeSince, tensorFromSentence
 
 import random

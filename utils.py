@@ -1,3 +1,5 @@
+# Jonas Arruda
+
 import time
 import math
 
