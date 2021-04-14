@@ -1,7 +1,7 @@
 # Jonas Arruda
 
 from language import normalizeString
-from training import evaluate, evaluateRandomly
+from training import evaluate, evaluateRandomly, cal_bleu_score
 
 from model import EncoderRNN, AttnDecoderRNN
 import torch
