@@ -7,8 +7,13 @@ import torch
 import torch.nn as nn
 from torch import optim
 
+from nltk.translate.bleu_score import sentence_bleu
+import warnings
+
 import matplotlib.pyplot as plt
+
 plt.switch_backend('agg')
+warnings.filterwarnings("ignore")  # to catch warning from sentence_bleu
 
 
 def batch_train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, decoder_optimizer,
@@ -138,7 +143,33 @@ def evaluate(encoder, decoder, input_lang, output_lang, sentence, max_length=10,
         return decoded_words, decoder_attentions[:di + 1]
 
 
+def cal_bleu_score(encoder, decoder, input_lang, output_lang, test_pairs, max_length=10, device='cpu'):
+    score4 = []
+    score3 = []
+    score2 = []
+    score1 = []
+
+    for i, pair in enumerate(test_pairs):
+        predicted_words, attentions = evaluate(encoder, decoder, input_lang, output_lang, pair[0],
+                                               max_length, device=device)
+        target = [word for word in pair[1].split(' ')]
+        score4.append(sentence_bleu([predicted_words[:-1]], target, weights=[0.25] * 4))
+        score3.append(sentence_bleu([predicted_words[:-1]], target, weights=[1 / 3] * 3))
+        score2.append(sentence_bleu([predicted_words[:-1]], target, weights=[0.5] * 2))
+        score1.append(sentence_bleu([predicted_words[:-1]], target, weights=[1] * 1))
+
+    print('BLEU-4 Score:', round(sum(score4)/len(test_pairs), 2))
+    print('BLEU-3 Score:', round(sum(score3)/len(test_pairs), 2))
+    print('BLEU-2 Score:', round(sum(score2)/len(test_pairs), 2))
+    print('BLEU-1 Score:', round(sum(score1)/len(test_pairs), 2))
+    return
+
+
 def evaluateRandomly(encoder, decoder, input_lang, output_lang, pairs, max_length=10, n=10, device='cpu'):
+    score4 = []
+    score3 = []
+    score2 = []
+    score1 = []
     for i in range(n):
         pair = random.choice(pairs)
         print('>', pair[0])
@@ -148,3 +179,15 @@ def evaluateRandomly(encoder, decoder, input_lang, output_lang, pairs, max_lengt
         output_sentence = ' '.join(output_words[:-1])
         print('<', output_sentence)
         print('')
+
+        target = [word for word in pair[1].split(' ')]
+        score4.append(sentence_bleu([output_words[:-1]], target, weights=[0.25] * 4))
+        score3.append(sentence_bleu([output_words[:-1]], target, weights=[1 / 3] * 3))
+        score2.append(sentence_bleu([output_words[:-1]], target, weights=[0.5] * 2))
+        score1.append(sentence_bleu([output_words[:-1]], target, weights=[1] * 1))
+
+    print('BLEU-4 Score:', round(sum(score4)/n, 2))
+    print('BLEU-3 Score:', round(sum(score3)/n, 2))
+    print('BLEU-2 Score:', round(sum(score2)/n, 2))
+    print('BLEU-1 Score:', round(sum(score1)/n, 2))
+    return
