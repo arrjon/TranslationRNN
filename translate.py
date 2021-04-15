@@ -5,6 +5,7 @@ from training import evaluate, evaluateRandomly
 
 from model import EncoderRNN, AttnDecoderRNN
 import torch
+from torchinfo import summary
 import pickle
 
 enter = input('Press enter to translate your own sentences...')
@@ -50,7 +51,12 @@ encoder1.load_state_dict(torch.load(path+'encoder.pth', map_location=device))
 attn_decoder1.load_state_dict(torch.load(path+'decoder.pth', map_location=device))
 print('Model loaded! \n')
 
+
 if randomEval:
+    summary(encoder1)
+    summary(attn_decoder1)
+    print('\n')
+
     evaluateRandomly(encoder1, attn_decoder1, input_lang, output_lang, pairs, max_length, device=device)
     exit()
 
